@@ -1,0 +1,6 @@
+{
+  "project": "davide97g/vola-befana",
+  "channel": "html5",
+  "build": "bun run build",
+  "dist": "dist"
+}

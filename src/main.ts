@@ -1277,8 +1277,8 @@ function drawHud(v: View) {
     const t = banner.life;
     const s = t > 2.1 ? 1 + (t - 2.1) * 2 : 1;
     g.globalAlpha = Math.min(1, t * 2);
-    label(g, banner.text, W / 2, H * 0.26, (small ? 28 : 40) * s, banner.color);
-    if (banner.sub) label(g, banner.sub, W / 2, H * 0.26 + (small ? 26 : 34), small ? 15 : 19, "#fbf3e4");
+    label(g, banner.text, W / 2, H * 0.19, (small ? 28 : 40) * s, banner.color);
+    if (banner.sub) label(g, banner.sub, W / 2, H * 0.19 + (small ? 26 : 34), small ? 15 : 19, "#fbf3e4");
     g.globalAlpha = 1;
   }
   void v;

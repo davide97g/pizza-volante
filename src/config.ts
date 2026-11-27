@@ -77,7 +77,7 @@ export const UPGRADES: Upgrade[] = [
 export type Levels = Record<UpKey, number>;
 
 // statistiche per livello
-export const RAMP_DROP = [6, 13, 23, 36, 52, 72]; // dislivello della rampa (m)
+export const RAMP_DROP = [9, 15, 23, 36, 52, 72]; // dislivello della rampa (m)
 export const RAMP_EXIT = [8, 10, 12, 14, 16, 18]; // angolo di uscita (gradi)
 export const BROOM_LIFT = [0.024, 0.029, 0.034, 0.039, 0.045, 0.052]; // rotazione della velocità per m/s
 export const BROOM_DRAG = [0.0028, 0.0021, 0.00155, 0.00115, 0.0008, 0.00055]; // resistenza base
