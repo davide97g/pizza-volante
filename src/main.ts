@@ -1220,7 +1220,7 @@ function drawHud(v: View) {
   g.stroke();
   if (!small) label(g, "Plebiscito", bx + bw, by + 30, 12, "#f2c14e", "right");
 
-  // botti e calze (sotto i pulsanti in alto a destra)
+  // botti e pizze (sotto i pulsanti in alto a destra)
   const rx = W - pad;
   let ry = small ? by + 26 : pad + 70;
   const maxF = BOOST_FUEL[save.lv.botti];
@@ -1239,24 +1239,34 @@ function drawHud(v: View) {
     ry += 26;
   }
   const nS = SOCKS[save.lv.calze];
+  // spicchi di pizza: uno per ogni pizza rimasta
   for (let i = 0; i < nS; i++) {
-    const x = rx - 8 - i * 16;
+    const x = rx - 9 - i * 18;
     g.globalAlpha = i < socksLeft ? 1 : 0.25;
-    g.fillStyle = SOCK_COLORS[i % 4];
     g.strokeStyle = "#1c1426";
     g.lineWidth = 1.5;
     g.beginPath();
-    g.moveTo(x - 4, ry);
-    g.lineTo(x + 3, ry);
-    g.lineTo(x + 3, ry + 10);
-    g.lineTo(x + 7, ry + 13);
-    g.lineTo(x + 5, ry + 17);
-    g.lineTo(x - 4, ry + 15);
+    g.moveTo(x - 7, ry + 1);
+    g.quadraticCurveTo(x, ry - 2, x + 7, ry + 1);
+    g.lineTo(x, ry + 17);
     g.closePath();
+    g.fillStyle = "#f6d27a";
     g.fill();
     g.stroke();
-    g.fillStyle = "#fbf3e4";
-    g.fillRect(x - 4, ry, 7, 3);
+    g.fillStyle = "#c98a3a";
+    g.beginPath();
+    g.moveTo(x - 7, ry + 1);
+    g.quadraticCurveTo(x, ry - 2, x + 7, ry + 1);
+    g.quadraticCurveTo(x, ry + 2, x - 7, ry + 1);
+    g.fill();
+    g.fillStyle = "#c8443a";
+    for (const [dx, dy] of [[-2.5, 5], [2, 8], [-0.5, 12]]) {
+      g.beginPath();
+      g.arc(x + dx, ry + dy, 1.6, 0, Math.PI * 2);
+      g.fill();
+    }
+    g.fillStyle = "#3f8f4a";
+    g.fillRect(x + 1.5, ry + 4, 2, 1.2);
   }
   g.globalAlpha = 1;
 

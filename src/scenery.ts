@@ -542,10 +542,22 @@ export function drawLandmarks(v: View, best: number) {
         break;
       }
       case "Posillipo":
+        // villa sul promontorio con la bandiera
         local(v, m.x + 50, ground(m.x + 50));
+        g.fillStyle = "#f0a88a";
+        g.fillRect(-5, 0, 10, 5);
+        g.fillStyle = "#c8643a";
+        g.fillRect(-5.5, 5, 11, 0.8);
+        g.fillStyle = "#3f6b5a";
+        for (const wx of [-3.5, -0.5, 2.5]) g.fillRect(wx, 2, 1, 1.6);
         g.fillStyle = "#3b2618";
-        g.fillRect(-0.2, 0, 0.4, 6);
-        g.fillRect(-1.6, 4, 3.2, 0.4);
+        g.fillRect(4, 5.8, 0.25, 4);
+        g.fillStyle = "#2f8f5b";
+        g.fillRect(4.25, 8.3, 0.8, 1.5);
+        g.fillStyle = "#fbf3e4";
+        g.fillRect(5.05, 8.3, 0.8, 1.5);
+        g.fillStyle = "#c8443a";
+        g.fillRect(5.85, 8.3, 0.8, 1.5);
         g.restore();
         break;
       case "L'acquedotto":
