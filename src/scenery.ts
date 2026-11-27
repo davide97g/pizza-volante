@@ -254,13 +254,20 @@ export function drawHouses(v: View, houses: House[]) {
     const c = chimneyTop(h);
     // fumo: colonna che sale (e spinge in su)
     if (h.smoke) {
-      for (let i = 0; i < 7; i++) {
-        const ph = (v.t * 0.35 + i / 7) % 1;
-        const r = 0.8 + ph * 3.5;
-        g.globalAlpha = (1 - ph) * 0.32;
-        g.fillStyle = "#d9def0";
+      // colonna tenue (dove la scopa viene spinta su) + sbuffi che salgono
+      const top = sy(v, c.y + 45);
+      const col = g.createLinearGradient(0, sy(v, c.y), 0, top);
+      col.addColorStop(0, "rgba(217,222,240,0.16)");
+      col.addColorStop(1, "rgba(217,222,240,0)");
+      g.fillStyle = col;
+      g.fillRect(sx(v, c.x - 2.5), top, 5 * v.k, sy(v, c.y) - top);
+      g.fillStyle = "#d9def0";
+      for (let i = 0; i < 14; i++) {
+        const ph = (v.t * 0.3 + i / 14) % 1;
+        const r = Math.max(2, (0.5 + ph * 1.8) * v.k);
+        g.globalAlpha = (1 - ph) * (1 - ph) * 0.45;
         g.beginPath();
-        g.arc(sx(v, c.x + Math.sin(ph * 5 + i) * 1.2 + ph * 3), sy(v, c.y + 0.5 + ph * 45), r * v.k, 0, Math.PI * 2);
+        g.arc(sx(v, c.x + Math.sin(ph * 6 + i) * 0.8 * ph), sy(v, c.y + 0.5 + ph * 42), r, 0, Math.PI * 2);
         g.fill();
       }
       g.globalAlpha = 1;

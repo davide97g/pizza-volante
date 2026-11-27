@@ -167,7 +167,9 @@ export function step(f: Flyer, lv: Levels, ramp: Ramp, inp: Input, dt: number, l
     const sl = Math.atan(slope(f.x));
     let vt = f.vx * Math.cos(sl) + f.vy * Math.sin(sl);
     const mu = isIce(f.x) ? 0.03 : 0.45;
-    vt += (-G * Math.sin(sl) - Math.sign(vt) * mu * G * Math.cos(sl) - 0.004 * vt * Math.abs(vt)) * dt;
+    // la neve fresca frena tanto (il ghiaccio no)
+    const plow = isIce(f.x) ? 0.02 : 0.22;
+    vt += (-G * Math.sin(sl) - Math.sign(vt) * mu * G * Math.cos(sl) - plow * vt) * dt;
     if (f.boosting) vt += thrust * 0.6 * dt;
     f.vx = vt * Math.cos(sl);
     f.vy = vt * Math.sin(sl);

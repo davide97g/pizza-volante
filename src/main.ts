@@ -203,11 +203,11 @@ const flakes = Array.from({ length: 140 }, () => ({ x: Math.random(), y: Math.ra
 // ---------- input ----------
 const keys = new Set<string>();
 const touch = { up: false, down: false, boost: false };
-let isTouch = matchMedia("(pointer: coarse)").matches;
+let isTouch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window || location.search.includes("touch");
 let dropQueued = false;
 
 function typing(e: Event) {
-  return ui.nickForm.contains(e.target as Node) && !ui.title.hidden;
+  return e.target instanceof Node && ui.nickForm.contains(e.target) && !ui.title.hidden;
 }
 window.addEventListener("keydown", (e) => {
   if (typing(e)) return;
@@ -335,6 +335,17 @@ void board(5).then((b) => renderBoard($("board-title"), b));
 const fmtNum = (n: number) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
 // ---------- laboratorio ----------
+const TIPS = [
+  "Consiglio: appena lasci la rampa tieni il muso un filo in su",
+  "Consiglio: picchia per prendere velocità, poi tira su piano",
+  "Consiglio: muso troppo in su = STALLO, e si cade",
+  "Consiglio: i fumi dei camini ti spingono in alto",
+  "Consiglio: segui i puntini, quando il cerchio è verde lancia la calza",
+  "Consiglio: i panettoni ricaricano i botti",
+  "Consiglio: atterra piatta, di muso è una musata",
+  "Consiglio: i corvi frenano, passaci sopra",
+  "Consiglio: le tappe nuove pagano un bonus la prima volta",
+];
 const ICONS: Record<UpKey, string> = {
   rampa: `<svg viewBox="0 0 48 48"><path d="M4 40 L4 10 Q10 32 44 34 L44 40 Z" fill="#9a6b3f" stroke="#1c1426" stroke-width="3" stroke-linejoin="round"/><path d="M4 10 Q10 32 44 34" fill="none" stroke="#fff" stroke-width="2"/><path d="M12 40V26M24 40V31M36 40V33" stroke="#1c1426" stroke-width="2.5"/></svg>`,
   scopa: `<svg viewBox="0 0 48 48"><path d="M6 40 L40 8" stroke="#1c1426" stroke-width="6" stroke-linecap="round"/><path d="M6 40 L40 8" stroke="#8a5a2e" stroke-width="3.5" stroke-linecap="round"/><path d="M14 30 L4 46 M14 30 L9 47 M14 30 L14 47 M14 30 L1 42 M14 30 L19 46" stroke="#d9a441" stroke-width="3" stroke-linecap="round"/><rect x="11" y="27" width="7" height="6" rx="1" fill="#c0392b" stroke="#1c1426" stroke-width="2" transform="rotate(-42 14 30)"/></svg>`,
@@ -424,7 +435,7 @@ function renderShop() {
   $("route-best").textContent = `Record: ${fmtNum(save.best)} m`;
   const nx = MILESTONES.find((m) => m.x > save.best);
   $("route-next").textContent = nx ? `Prossima tappa: ${nx.name} (${fmtNum(nx.x)} m)` : "Oltre Roma!";
-  $("shop-hint").textContent = isTouch ? "Compra quello che puoi, poi VOLA!" : "Tasti 1-5 per comprare · Spazio per volare";
+  $("shop-hint").textContent = `${TIPS[(save.run - 1) % TIPS.length]}${isTouch ? "" : " · Tasti 1-5 per comprare, Spazio per volare"}`;
 }
 
 function buy(k: UpKey) {
@@ -520,7 +531,7 @@ function startRun() {
   emit(f.x, f.y, 10, { color: "#fff", speed: 3, size: 3, max: 0.6, kind: "puff" });
 }
 
-const befScale = () => Math.max(cam.k, Math.min(W, H) / 17);
+const befScale = () => Math.max(cam.k, Math.min(W, H) / 15);
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 function sockHit(x0: number, y0: number, x1: number, y1: number): { kind: "chimney" | "roof" | "ground"; h?: House } | null {
@@ -1195,7 +1206,7 @@ function drawHud(v: View) {
 
   // botti e calze (sotto i pulsanti in alto a destra)
   const rx = W - pad;
-  let ry = pad + 70;
+  let ry = small ? by + 26 : pad + 70;
   const maxF = BOOST_FUEL[save.lv.botti];
   if (maxF > 0) {
     const w = small ? 90 : 130;
@@ -1276,7 +1287,7 @@ show("title");
 music("title");
 if (location.hostname === "localhost")
   Object.assign(window, {
-    __game: () => ({ state, f, save, cam, socksLeft, stats }),
+    __game: () => ({ state, f, save, cam, socksLeft, stats, keys: [...keys], paused }),
     __money: (n: number) => {
       save.money += n;
       persist();
