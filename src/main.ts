@@ -745,10 +745,11 @@ function updateFly(dt: number) {
 }
 
 function fireworks() {
-  const x = f.x + (Math.random() - 0.3) * 40;
-  const y = ground(f.x) + 25 + Math.random() * 25;
+  const x = (state === "win" ? GOAL : f.x) + (Math.random() - 0.3) * 50;
+  const y = ground(x) + 30 + Math.random() * 35;
   const col = ["#f2c14e", "#ff6b6b", "#7ad0ff", "#a6ff8a", "#ff9ff3"][Math.floor(Math.random() * 5)];
-  emit(x, y, 50, { color: col, speed: 16, size: 3, max: 1.4, grav: 4, kind: "spark" });
+  emit(x, y, 60, { color: col, speed: 22, size: 4, max: 1.6, grav: 4, kind: "spark" });
+  emit(x, y, 12, { color: "#fff6dc", speed: 10, size: 3, max: 1.2, grav: 3, kind: "star" });
   sfx.firework();
 }
 
@@ -854,6 +855,11 @@ function showWin(day: number) {
         ? `Arrivata proprio il 6 gennaio. Giusto in tempo!`
         : `Arrivata il ${dateOf(day)}, in ritardo di ${-left} giorni. Meglio tardi che mai.`;
   const min = Math.max(1, Math.round(save.playTime / 60));
+  f.x = GOAL + 4;
+  f.y = ground(f.x);
+  f.vx = f.vy = 0;
+  f.th = 0;
+  f.boosting = false;
   $("win-stats").textContent = `${day} voli · circa ${min} minuti · ${save.chimneys} calze nei camini`;
   show("win");
 }
@@ -868,6 +874,7 @@ function update(dt: number) {
   clock += dt;
   if (!paused) {
     if (state === "fly") updateFly(dt);
+    if (state === "win" && Math.random() < dt * 1.6) fireworks();
     updateFx(dt);
   }
   updateCam(dt);
@@ -915,15 +922,24 @@ function updateCam(dt: number) {
     cam.y = lerp(cam.y, ramp.topY / 2 + 2, Math.min(1, dt * 4));
     return;
   }
+  if (state === "win") {
+    const tk = Math.min(W, H) / 100;
+    cam.k = lerp(cam.k, tk, Math.min(1, dt * 2));
+    cam.x = lerp(cam.x, GOAL + 6, Math.min(1, dt * 3));
+    cam.y = lerp(cam.y, ground(GOAL) + (H / cam.k) * 0.38, Math.min(1, dt * 3));
+    return;
+  }
   const v = f.phase === "ramp" ? f.vs : Math.hypot(f.vx, f.vy);
   const alt = Math.max(0, f.y - ground(f.x));
-  const vh = Math.min(420, 24 + v * 0.75 + alt * 0.6);
+  // inquadra sempre anche il terreno (fino a una certa quota): si vedono case e monumenti
+  const vh = Math.min(560, Math.max(24 + v * 0.6, alt * 1.7 + 18));
   const tk = Math.min(W * 0.85, H) / vh;
   cam.k = lerp(cam.k, tk, Math.min(1, dt * 2));
   const viewW = W / cam.k;
   const viewH = H / cam.k;
   const tx = f.x + Math.max(-viewW * 0.1, Math.min(viewW * 0.22, f.vx * 0.35));
-  const ty = Math.max(f.y - viewH * 0.05, ground(tx) + viewH * 0.32, f.phase === "ramp" ? ramp.topY * 0.4 : -1e9);
+  const gy = ground(tx);
+  const ty = f.y - gy < viewH * 0.75 ? Math.max(gy + viewH * 0.36, f.y - viewH * 0.2) : f.y - viewH * 0.3;
   cam.x = lerp(cam.x, tx, Math.min(1, dt * 8));
   cam.y = lerp(cam.y, ty, Math.min(1, dt * 5));
 }
