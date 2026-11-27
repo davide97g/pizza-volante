@@ -7,4 +7,4 @@ Tempi in ora locale (27 novembre 2026). L'hash è quello del commit della versio
 | v01 | 7664009 | 15:54 | 16:12 | Primo giocabile: rampa, planata con stallo, botti, calze nei camini con mira, laboratorio con 5 potenziamenti, risultati in lire, tarantella Web Audio, classifica |
 | v02 | 10fab01 | 16:12 | 16:17 | Comandi touch, la neve fresca frena la scivolata, fumo dei camini a colonna, consigli nel laboratorio |
 | v03 | 6ee3a09 | 16:17 | 16:21 | La camera inquadra sempre il terreno (case e monumenti visibili anche in quota), scena finale a Piazza Navona con i fuochi |
-| v04 | (vedi git log) | 16:21 | 16:27 | Rampa iniziale più alta, banner più in alto, materiali itch (copertina, screenshot, page.md), README |
+| v04 | 690ccb4 | 16:21 | 16:23 | Rampa iniziale più alta, banner più in alto, materiali itch (copertina, screenshot, page.md), README |
