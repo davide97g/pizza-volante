@@ -65,7 +65,7 @@ for (let run = 1; run <= 60; run++) {
     `run ${String(run).padStart(2)} | ${f.maxX.toFixed(0).padStart(5)} m  alt ${f.maxAlt.toFixed(0).padStart(4)}  v ${(f.maxV * 3.6 * TIME_SCALE).toFixed(0).padStart(3)} km/h  t ${(f.t / TIME_SCALE).toFixed(1).padStart(5)}s | +${pt.toFixed(0).padStart(5)} → ${money.toFixed(0).padStart(5)} | ${buys.join(" ")}`,
   );
   if (f.maxX >= GOAL) {
-    console.log(`NAVONA al run ${run}, ~${(time / 60).toFixed(1)} min`);
+    console.log(`PLEBISCITO al run ${run}, ~${(time / 60).toFixed(1)} min`);
     break;
   }
 }
