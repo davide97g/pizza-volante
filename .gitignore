@@ -1,0 +1,5 @@
+node_modules
+dist
+itch/out
+*.zip
+.DS_Store
