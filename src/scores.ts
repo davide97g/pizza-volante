@@ -2,7 +2,7 @@
 // L'id segreto vive in localStorage ("vg-player", condiviso da tutti i giochi della sfida):
 // ai giochi dopo il nick è già pronto, e rinominarsi si porta dietro tutti i punteggi.
 // La classifica pubblica è anonima: tag di 4 caratteri, e "TU" per chi gioca.
-const GAME = "vola-befana";
+const GAME = "pizza-volante";
 const API =
   location.hostname === "videogiochi.davideghiotto.it"
     ? "/api"

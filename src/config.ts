@@ -1,10 +1,10 @@
 // Numeri del gioco: potenziamenti, tappe del viaggio, guadagni.
-// Le unità sono metri e secondi; il denaro interno è in "punti" e si mostra in lire (x 100).
+// Le unità sono metri e secondi; il denaro sono le mance, in euro.
 
 export const G = 9.8;
 export const TIME_SCALE = 2.2; // il gioco gira più veloce del tempo reale: run brevi, velocità vere
-export const GOAL = 5000; // Piazza Navona
-export const LIRE = 100; // 1 punto = 100 lire
+export const GOAL = 5000; // Piazza del Plebiscito
+export const LIRE = 1; // 1 punto = 1 euro di mancia
 
 export type UpKey = "rampa" | "scopa" | "botti" | "calze" | "cappello";
 
@@ -16,24 +16,24 @@ export const UPGRADES: Upgrade[] = [
     key: "rampa",
     title: "Rampa",
     levels: [
-      { name: "Tetto di casa", desc: "Si parte dal comignolo. Basso, ma è casa.", cost: 0 },
-      { name: "Fienile", desc: "Più alto, profuma di fieno.", cost: 40 },
-      { name: "Campanile", desc: "Il parroco non deve saperlo.", cost: 160 },
+      { name: "Vicolo in discesa", desc: "Si parte dalla porta della pizzeria.", cost: 0 },
+      { name: "Scalinata", desc: "Gradini a rotta di collo. Più slancio.", cost: 40 },
+      { name: "Rampa del garage", desc: "Il garage dello zio, finalmente utile.", cost: 160 },
       { name: "Trampolino di legno", desc: "Scricchiola, ma lancia forte.", cost: 450 },
-      { name: "Trampolino di Cortina", desc: "Olimpico. Vietato alle streghe (pazienza).", cost: 1100 },
-      { name: "Cima del Cristallo", desc: "Si parte da tremila metri. Quasi.", cost: 2400 },
+      { name: "Pendio del Vesuvio", desc: "Giù dal vulcano a tutta birra.", cost: 1100 },
+      { name: "Bordo del cratere", desc: "Più in alto di così si fuma.", cost: 2400 },
     ],
   },
   {
     key: "scopa",
-    title: "Scopa",
+    title: "Ali",
     levels: [
-      { name: "Scopa vecchia", desc: "Spelacchiata. Plana come un mattone.", cost: 0 },
-      { name: "Saggina nuova", desc: "Setole fresche, plana meglio.", cost: 50 },
-      { name: "Scopa di bambù", desc: "Leggera e flessibile.", cost: 190 },
-      { name: "Scopa in alluminio", desc: "Sembra un'ala. Lo è quasi.", cost: 500 },
-      { name: "Scopa in carbonio", desc: "Galleria del vento a Maranello.", cost: 1200 },
-      { name: "Scopa d'oro", desc: "Leggendaria. Vola da sola.", cost: 2600 },
+      { name: "Cartone della pizza", desc: "Un'ala di cartone. Plana come un mattone.", cost: 0 },
+      { name: "Tovaglia a quadri", desc: "Presa dal tavolo 4, plana meglio.", cost: 50 },
+      { name: "Ombrellone", desc: "Dal lido, con tutta la frangia.", cost: 190 },
+      { name: "Vela da gozzo", desc: "Sembra un'ala. Lo è quasi.", cost: 500 },
+      { name: "Deltaplano", desc: "Quello vero, comprato usato.", cost: 1200 },
+      { name: "Ala in carbonio", desc: "Leggendaria. Vola da sola.", cost: 2600 },
     ],
   },
   {
@@ -41,35 +41,35 @@ export const UPGRADES: Upgrade[] = [
     title: "Botti",
     levels: [
       { name: "Niente botti", desc: "Si vola solo di planata.", cost: 0 },
-      { name: "Raudi", desc: "Una spinta breve e rumorosa.", cost: 70 },
+      { name: "Tric-trac", desc: "Una spinta breve e rumorosa.", cost: 70 },
       { name: "Petardi", desc: "Più spinta, più baccano.", cost: 240 },
       { name: "Bengala", desc: "Spinta lunga e scintillante.", cost: 600 },
-      { name: "Fontane", desc: "Una fontana di fuoco sotto la scopa.", cost: 1400 },
+      { name: "Fontane", desc: "Una fontana di fuoco sotto la Vespa.", cost: 1400 },
       { name: "Razzo di Capodanno", desc: "Mezzanotte anticipata.", cost: 2900 },
     ],
   },
   {
     key: "calze",
-    title: "Calze",
+    title: "Pizze",
     levels: [
-      { name: "Nessuna calza", desc: "Compra calze da lanciare nei camini.", cost: 0 },
-      { name: "2 calze", desc: "Lanciale nei camini: centro = tanti soldi.", cost: 30 },
-      { name: "3 calze", desc: "Una in più, e più pesanti di dolci.", cost: 110 },
-      { name: "4 calze", desc: "Carbone escluso.", cost: 300 },
-      { name: "6 calze", desc: "Mezzo paese servito.", cost: 650 },
-      { name: "8 calze", desc: "Tutto il paese. Anche i cattivi.", cost: 1300 },
+      { name: "Nessuna pizza", desc: "Compra pizze da lanciare nei panari.", cost: 0 },
+      { name: "2 margherite", desc: "Lanciale nei cesti calati dai tetti: dentro = mance grosse.", cost: 30 },
+      { name: "3 pizze", desc: "Una marinara in più.", cost: 110 },
+      { name: "4 pizze", desc: "Con la bufala, che costa.", cost: 300 },
+      { name: "6 pizze", desc: "Mezzo quartiere servito.", cost: 650 },
+      { name: "8 pizze", desc: "Tutto il quartiere. E una fritta.", cost: 1300 },
     ],
   },
   {
     key: "cappello",
-    title: "Cappello",
+    title: "Portafortuna",
     levels: [
-      { name: "Fazzoletto", desc: "Nessun potere. Tiene caldo.", cost: 0 },
-      { name: "Fazzoletto a fiori", desc: "Attira le monete vicine. +10% lire.", cost: 60 },
-      { name: "Cappello di lana", desc: "Calamita più forte. +20% lire.", cost: 220 },
-      { name: "Cappello a punta", desc: "Monete da lontano. +30% lire.", cost: 520 },
-      { name: "Cappello stellato", desc: "Attira tutto. +45% lire.", cost: 1150 },
-      { name: "Cappello della Befana", desc: "Quello vero. +60% lire.", cost: 2200 },
+      { name: "Tasche vuote", desc: "Nessun potere. Solo le chiavi della Vespa.", cost: 0 },
+      { name: "Cornetto di plastica", desc: "Attira le monete vicine. +10% mance.", cost: 60 },
+      { name: "Cornetto di corallo", desc: "Calamita più forte. +20% mance.", cost: 220 },
+      { name: "Cornetto d'oro", desc: "Monete da lontano. +30% mance.", cost: 520 },
+      { name: "Corno e ferro di cavallo", desc: "Attira tutto. +45% mance.", cost: 1150 },
+      { name: "Il cornetto gigante", desc: "Quello del nonno. +60% mance.", cost: 2200 },
     ],
   },
 ];
@@ -94,27 +94,27 @@ export const PAY = {
   perAltitude: 0.45, // per metro di quota massima sopra il terreno
   perKmh: 0.18, // per km/h di velocità massima
   perSecond: 1.2, // per secondo in aria
-  coin: 5, // moneta da 500 lire
-  chimney: 30, // calza nel camino
-  roof: 8, // calza sul tetto
+  coin: 2, // moneta da 2 euro
+  chimney: 30, // pizza nel panaro
+  roof: 8, // pizza sul terrazzo
 };
 
 // tappe del viaggio: bonus la prima volta che le superi
 export type Milestone = { x: number; name: string; bonus: number };
 export const MILESTONES: Milestone[] = [
-  { x: 150, name: "Il pollaio", bonus: 15 },
+  { x: 150, name: "Il limoneto", bonus: 15 },
   { x: 400, name: "Il campanile", bonus: 30 },
-  { x: 800, name: "Il presepe vivente", bonus: 60 },
-  { x: 1300, name: "Il lago ghiacciato", bonus: 100 },
-  { x: 2000, name: "L'Appennino", bonus: 150 },
-  { x: 2800, name: "Gli acquedotti", bonus: 220 },
-  { x: 3600, name: "Il Colosseo", bonus: 300 },
-  { x: 4300, name: "Castel Sant'Angelo", bonus: 400 },
-  { x: GOAL, name: "Piazza Navona", bonus: 0 },
+  { x: 800, name: "San Gregorio Armeno", bonus: 60 },
+  { x: 1300, name: "Il lungomare", bonus: 100 },
+  { x: 2000, name: "Posillipo", bonus: 150 },
+  { x: 2800, name: "L'acquedotto", bonus: 220 },
+  { x: 3600, name: "Il Maschio Angioino", bonus: 300 },
+  { x: 4300, name: "Castel dell'Ovo", bonus: 400 },
+  { x: GOAL, name: "Piazza del Plebiscito", bonus: 0 },
 ];
 
-// calendario: run 1 = 1 dicembre, l'Epifania è il 6 gennaio (run 37)
-export const EPIFANIA = 37;
+// calendario: run 1 = 1 dicembre, il concerto di Capodanno è il 31 dicembre (run 31)
+export const DEADLINE = 31;
 const MESI = ["dicembre", "gennaio"];
 export function dateOf(run: number): string {
   const d = run - 1; // giorni dopo il 1 dicembre
@@ -124,5 +124,5 @@ export function dateOf(run: number): string {
 }
 
 export function lire(pt: number): string {
-  return `L. ${String(Math.round(pt) * LIRE).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+  return `€ ${String(Math.round(pt) * LIRE).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
 }

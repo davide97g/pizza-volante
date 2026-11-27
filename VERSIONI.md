@@ -8,3 +8,4 @@ Tempi in ora locale (27 novembre 2026). L'hash è quello del commit della versio
 | v02 | 10fab01 | 16:12 | 16:17 | Comandi touch, la neve fresca frena la scivolata, fumo dei camini a colonna, consigli nel laboratorio |
 | v03 | 6ee3a09 | 16:17 | 16:21 | La camera inquadra sempre il terreno (case e monumenti visibili anche in quota), scena finale a Piazza Navona con i fuochi |
 | v04 | 690ccb4 | 16:21 | 16:23 | Rampa iniziale più alta, banner più in alto, materiali itch (copertina, screenshot, page.md), README |
+| v05 | (vedi git log) | 16:27 | 16:34 | Nuovo tema: da "Vola, Befana!" a "Pizza Volante" (Gennarino sulla Vespa con l'ala, pizze nei panari, giornata di sole sul golfo con il Vesuvio, tappe napoletane, garage, mance in euro, finale al concerto di Capodanno in Piazza del Plebiscito); repo e cartella rinominati |

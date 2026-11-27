@@ -28,7 +28,7 @@ export function ground(x: number): number {
   hills *= 1 - lake;
   // l'Appennino: una gobba
   hills += 45 * Math.exp(-(((x - 2050) / 220) ** 2));
-  // Piazza Navona: piano
+  // Piazza del Plebiscito: piano
   const piazza = smooth(GOAL - 150, GOAL - 60, x) * (1 - smooth(GOAL + 120, GOAL + 200, x));
   const h = descent + hills;
   return h * (1 - piazza) + (150 * (Math.exp(-GOAL / 650) - 1) - GOAL * 0.004) * piazza;
@@ -51,7 +51,7 @@ export type House = {
   served: number; // 0 no, 1 tetto, 2 camino (per run)
 };
 
-const WALLS = ["#c98f6b", "#d9b38c", "#b9775a", "#e3c9a2", "#a86f55", "#cf9e7a", "#9f8a78"];
+const WALLS = ["#f2c879", "#f0a88a", "#f6e3c0", "#e98f6f", "#f4d6a0", "#fbefdc", "#e7b86a"];
 
 export function buildHouses(): House[] {
   const r = rng(1225);
@@ -72,7 +72,7 @@ export function buildHouses(): House[] {
           x: hx,
           w,
           h,
-          roof: 2.5 + r() * 2.5,
+          roof: 1.2 + r() * 1.2,
           base,
           cx: (r() - 0.5) * w * 0.5,
           ch: 1.6 + r() * 1.4,
@@ -94,6 +94,12 @@ export function chimneyTop(h: House) {
   const ridge = h.base + h.h + h.roof;
   const y = ridge - (Math.abs(h.cx) / (h.w / 2)) * h.roof + h.ch;
   return { x: h.x + h.cx, y };
+}
+// il forno a legna: comignolo sull'altra falda, il suo fumo spinge su
+export function smokeTop(h: House) {
+  const sx = h.cx > 0 ? -h.w * 0.28 : h.w * 0.28;
+  const ridge = h.base + h.h + h.roof;
+  return { x: h.x + sx, y: ridge - (Math.abs(sx) / (h.w / 2)) * h.roof + 1.6 };
 }
 export function roofY(h: House, x: number) {
   const d = Math.abs(x - h.x) / (h.w / 2 + 0.6);

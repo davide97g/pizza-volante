@@ -1,4 +1,4 @@
-// Fisica della Befana: rampa (perlina su una curva), volo (planata con stallo), atterraggio e scivolata.
+// Fisica della Vespa volante: rampa (perlina su una curva), volo (planata con stallo), atterraggio e scivolata.
 // Niente rendering qui: lo usa anche tools/tune.ts per bilanciare il gioco.
 import {
   BOOST_FUEL,

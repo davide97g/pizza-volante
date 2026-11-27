@@ -8,7 +8,7 @@ mkdir -p "$OUT"
 bun run build >/dev/null
 bunx serve dist -l 5196 >/dev/null 2>&1 &
 SRV=$!
-ab() { agent-browser --namespace volabef --session volo "$@" >/dev/null; }
+ab() { agent-browser --namespace pizza-volante --session pizza-volante "$@" >/dev/null; }
 trap 'kill $SRV 2>/dev/null; ab close || true' EXIT
 until curl -s -o /dev/null localhost:5196/; do sleep 0.5; done
 URL=http://localhost:5196/
@@ -23,7 +23,7 @@ AUTO='(() => { const held = {}; const key = (k, on) => { if (!!held[k] === on) r
 # copertina: solo logo e Befana sopra la scena
 ab set viewport 630 500
 ab open $URL
-ab eval 'localStorage.clear(); localStorage.setItem("vola-befana-muted","1"); 1'
+ab eval 'localStorage.clear(); localStorage.setItem("pizza-volante-muted","1"); 1'
 ab open $URL
 sleep 2.5
 ab eval 'const s=document.createElement("style"); s.textContent="#corner,.tag,.cta,#title-board{display:none!important} .logo{margin-top:18px!important} .logo .a{font-size:58px!important} .logo .b{font-size:116px!important}"; document.head.append(s); document.activeElement.blur(); 1'
@@ -36,12 +36,12 @@ sleep 2
 ab eval 'document.getElementById("title-board").style.display="none"; document.activeElement.blur(); 1'
 ab screenshot "$OUT/01-titolo.png"
 
-ab eval "localStorage.setItem('vola-befana-save', '$MID'); 1"
+ab eval "localStorage.setItem('pizza-volante-save', '$MID'); 1"
 ab open $URL
 sleep 1.5
 ab click '#play'
 sleep 1
-ab screenshot "$OUT/03-laboratorio.png"
+ab screenshot "$OUT/03-garage.png"
 ab eval "$AUTO"
 ab press Space
 sleep 0.8

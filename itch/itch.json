@@ -1,5 +1,5 @@
 {
-  "project": "davide97g/vola-befana",
+  "project": "davide97g/pizza-volante",
   "channel": "html5",
   "build": "bun run build",
   "dist": "dist"

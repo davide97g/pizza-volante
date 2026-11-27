@@ -1,10 +1,10 @@
 import { initAudio, isMuted, music, quietFlight, setFlight, sfx, toggleMute } from "./audio";
-import { BEFANA_UNIT, drawBefana } from "./befana";
+import { drawRider, RIDER_LIFT, RIDER_UNIT } from "./rider";
 import {
   BONUS,
   BOOST_FUEL,
   dateOf,
-  EPIFANIA,
+  DEADLINE,
   G,
   GOAL,
   lire,
@@ -40,7 +40,7 @@ import {
 } from "./scenery";
 import { board, player, setNick, submit, type Board } from "./scores";
 import { buildRamp, newFlyer, rampAt, step, type Flyer, type Ramp } from "./sim";
-import { buildHouses, buildItems, buildTrees, chimneyTop, ground, roofY, type House, type Item } from "./world";
+import { buildHouses, buildItems, buildTrees, chimneyTop, ground, roofY, smokeTop, type House, type Item } from "./world";
 
 // ---------- salvataggio ----------
 type Save = {
@@ -56,7 +56,7 @@ type Save = {
   chimneys: number;
   playTime: number;
 };
-const KEY = "vola-befana-save";
+const KEY = "pizza-volante-save";
 const fresh = (): Save => ({
   money: 0,
   lv: { rampa: 0, scopa: 0, botti: 0, calze: 0, cappello: 0 },
@@ -147,6 +147,7 @@ let items: Item[] = [];
 type Sock = { x: number; y: number; vx: number; vy: number; rot: number; color: string };
 let socks: Sock[] = [];
 let socksLeft = 0;
+const DUST = "#e8dcc0";
 const SOCK_COLORS = ["#d23c3c", "#2f8f5b", "#e9c46a", "#3d6fb6"];
 type RunStats = { coins: number; chimney: number; roof: number; panettoni: number; crows: number; marks: Milestone[] };
 let stats: RunStats = { coins: 0, chimney: 0, roof: 0, panettoni: 0, crows: 0, marks: [] };
@@ -197,8 +198,8 @@ function showBanner(text: string, sub = "", color = "#f2c14e") {
   banner = { text, sub, life: 2.4, color };
 }
 
-// fiocchi di neve in coordinate schermo
-const flakes = Array.from({ length: 140 }, () => ({ x: Math.random(), y: Math.random(), z: 0.3 + Math.random() * 0.9, w: Math.random() * 6 }));
+// pulviscolo in coordinate schermo
+const flakes = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random(), z: 0.3 + Math.random() * 0.9, w: Math.random() * 6 }));
 
 // ---------- input ----------
 const keys = new Set<string>();
@@ -313,13 +314,13 @@ ui.nickForm.addEventListener("submit", (e) => {
 });
 ui.reset.hidden = save.run <= 1;
 ui.reset.addEventListener("click", () => {
-  if (!confirm("Ricominciare dal 1 dicembre? Perdi soldi e potenziamenti.")) return;
+  if (!confirm("Ricominciare dal 1 dicembre? Perdi mance e potenziamenti.")) return;
   save = fresh();
   persist();
   ui.reset.hidden = true;
   sfx.click();
 });
-if (isTouch) $("title-hint").textContent = "Tasti ▲▼ per inclinarti · BOTTI per la spinta · CALZA nei camini";
+if (isTouch) $("title-hint").textContent = "Tasti ▲▼ per inclinarti · BOTTI per la spinta · PIZZA nei panari";
 
 function renderBoard(el: HTMLElement, b: Board | null) {
   if (!b || !b.rows.length) {
@@ -334,24 +335,24 @@ void board(5).then((b) => renderBoard($("board-title"), b));
 
 const fmtNum = (n: number) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-// ---------- laboratorio ----------
+// ---------- garage ----------
 const TIPS = [
   "Consiglio: appena lasci la rampa tieni il muso un filo in su",
   "Consiglio: picchia per prendere velocità, poi tira su piano",
   "Consiglio: muso troppo in su = STALLO, e si cade",
-  "Consiglio: i fumi dei camini ti spingono in alto",
-  "Consiglio: segui i puntini, quando il cerchio è verde lancia la calza",
-  "Consiglio: i panettoni ricaricano i botti",
-  "Consiglio: atterra piatta, di muso è una musata",
-  "Consiglio: i corvi frenano, passaci sopra",
+  "Consiglio: il fumo dei forni a legna ti spinge in alto",
+  "Consiglio: segui i puntini, quando il cerchio è verde lancia la pizza",
+  "Consiglio: le sfogliatelle ricaricano i botti",
+  "Consiglio: atterra dritto, di muso è una musata",
+  "Consiglio: i gabbiani frenano, passaci sopra",
   "Consiglio: le tappe nuove pagano un bonus la prima volta",
 ];
 const ICONS: Record<UpKey, string> = {
   rampa: `<svg viewBox="0 0 48 48"><path d="M4 40 L4 10 Q10 32 44 34 L44 40 Z" fill="#9a6b3f" stroke="#1c1426" stroke-width="3" stroke-linejoin="round"/><path d="M4 10 Q10 32 44 34" fill="none" stroke="#fff" stroke-width="2"/><path d="M12 40V26M24 40V31M36 40V33" stroke="#1c1426" stroke-width="2.5"/></svg>`,
-  scopa: `<svg viewBox="0 0 48 48"><path d="M6 40 L40 8" stroke="#1c1426" stroke-width="6" stroke-linecap="round"/><path d="M6 40 L40 8" stroke="#8a5a2e" stroke-width="3.5" stroke-linecap="round"/><path d="M14 30 L4 46 M14 30 L9 47 M14 30 L14 47 M14 30 L1 42 M14 30 L19 46" stroke="#d9a441" stroke-width="3" stroke-linecap="round"/><rect x="11" y="27" width="7" height="6" rx="1" fill="#c0392b" stroke="#1c1426" stroke-width="2" transform="rotate(-42 14 30)"/></svg>`,
+  scopa: `<svg viewBox="0 0 48 48"><path d="M3 22 Q24 14 45 20 L26 8 Z" fill="#fbf3e4" stroke="#1c1426" stroke-width="3" stroke-linejoin="round"/><path d="M3 22 L14 16 L16 12 Z" fill="#2f8f5b"/><path d="M45 20 L34 14 L32 11 Z" fill="#c8443a"/><path d="M18 19 L20 40 M30 19 L26 40" stroke="#1c1426" stroke-width="2.5"/><circle cx="23" cy="42" r="4" fill="#7fcbb8" stroke="#1c1426" stroke-width="2.5"/></svg>`,
   botti: `<svg viewBox="0 0 48 48"><path d="M24 4 L31 14 L31 32 L17 32 L17 14 Z" fill="#c8443a" stroke="#1c1426" stroke-width="3" stroke-linejoin="round"/><rect x="17" y="18" width="14" height="5" fill="#f2c14e"/><path d="M20 34 L17 44 M24 34 L24 46 M28 34 L31 44" stroke="#f2a33a" stroke-width="3" stroke-linecap="round"/></svg>`,
-  calze: `<svg viewBox="0 0 48 48"><path d="M16 6 H32 V28 L24 40 Q18 46 12 40 Q8 34 14 30 L16 28 Z" fill="#d23c3c" stroke="#1c1426" stroke-width="3" stroke-linejoin="round"/><rect x="14" y="5" width="20" height="8" rx="2" fill="#fbf3e4" stroke="#1c1426" stroke-width="3"/></svg>`,
-  cappello: `<svg viewBox="0 0 48 48"><path d="M6 36 Q24 30 42 36 Q24 42 6 36 Z" fill="#2a2233" stroke="#1c1426" stroke-width="3"/><path d="M14 34 L26 6 L34 34 Z" fill="#2a2233" stroke="#1c1426" stroke-width="3" stroke-linejoin="round"/><circle cx="22" cy="22" r="2" fill="#f2c14e"/><circle cx="28" cy="28" r="1.6" fill="#f2c14e"/><circle cx="25" cy="14" r="1.4" fill="#f2c14e"/></svg>`,
+  calze: `<svg viewBox="0 0 48 48"><rect x="5" y="14" width="38" height="24" rx="2" fill="#f3e2bf" stroke="#1c1426" stroke-width="3"/><path d="M5 20 H43" stroke="#1c1426" stroke-width="2"/><rect x="15" y="25" width="18" height="6" rx="1" fill="#c8443a"/><circle cx="34" cy="10" r="3" fill="#2f8f5b"/><path d="M14 10 Q20 4 26 10" fill="none" stroke="#c9c4cf" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  cappello: `<svg viewBox="0 0 48 48"><path d="M30 6 Q14 20 16 40 Q22 44 26 40 Q24 24 36 10 Z" fill="#c8443a" stroke="#1c1426" stroke-width="3" stroke-linejoin="round"/><path d="M14 38 Q20 46 28 40" fill="none" stroke="#f2c14e" stroke-width="3" stroke-linecap="round"/><path d="M27 14 Q22 20 21 28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".6"/></svg>`,
 };
 
 function statLine(k: UpKey, l: number): string {
@@ -363,9 +364,9 @@ function statLine(k: UpKey, l: number): string {
     case "botti":
       return l ? `${BOOST_FUEL[l].toFixed(1).replace(".", ",")} s di spinta, forza ${BOOST_THRUST[l]}` : "nessuna spinta";
     case "calze":
-      return `${SOCKS[l]} calze per volo`;
+      return `${SOCKS[l]} pizze per volo`;
     case "cappello":
-      return l ? `+${Math.round(BONUS[l] * 100)}% lire, calamita ${MAGNET[l]} m` : "nessun bonus";
+      return l ? `+${Math.round(BONUS[l] * 100)}% mance, calamita ${MAGNET[l]} m` : "nessun bonus";
   }
 }
 
@@ -394,14 +395,14 @@ buildCards();
 
 function renderShop() {
   ui.money.textContent = lire(save.money);
-  const left = EPIFANIA - save.run;
+  const left = DEADLINE - save.run;
   ui.date.textContent =
     left > 0
-      ? `Volo del ${dateOf(save.run)} · mancano ${left} giorni all'Epifania`
+      ? `Volo del ${dateOf(save.run)} · mancano ${left} giorni al concerto di Capodanno`
       : left === 0
-        ? `${dateOf(save.run)}: è l'Epifania!`
+        ? `${dateOf(save.run)}: stasera c'è il concerto!`
         : `${dateOf(save.run)} · in ritardo di ${-left} giorni`;
-  if (save.won) ui.date.textContent = `Volo del ${dateOf(save.run)} · Piazza Navona raggiunta! Ora vola più lontano.`;
+  if (save.won) ui.date.textContent = `Volo del ${dateOf(save.run)} · Pizza consegnata al Plebiscito! Ora vola più lontano.`;
   for (const u of UPGRADES) {
     const l = save.lv[u.key];
     const card = $(`card-${u.key}`);
@@ -528,7 +529,7 @@ function startRun() {
   if (state !== "ready") return;
   state = "fly";
   sfx.go();
-  emit(f.x, f.y, 10, { color: "#fff", speed: 3, size: 3, max: 0.6, kind: "puff" });
+  emit(f.x, f.y, 10, { color: DUST, speed: 3, size: 3, max: 0.6, kind: "puff" });
 }
 
 const befScale = () => Math.max(cam.k, Math.min(W, H) / 15);
@@ -572,7 +573,7 @@ function updateFly(dt: number) {
   let lift = 0;
   for (const h of housesNear(f.x)) {
     if (!h.smoke) continue;
-    const c = chimneyTop(h);
+    const c = smokeTop(h);
     const dy = f.y - c.y;
     if (Math.abs(f.x - c.x) < 3.5 && dy > 0 && dy < 50) lift = Math.max(lift, 26 * (1 - dy / 50));
   }
@@ -593,14 +594,15 @@ function updateFly(dt: number) {
   if (wasPhase === "ramp" && f.phase === "air") {
     sfx.launch();
     shake = 0.3;
-    emit(f.x, f.y, 18, { color: "#fff", speed: 6, dir: Math.PI * 0.75, spread: 1.2, size: 4, max: 0.7, grav: -4, kind: "puff" });
+    emit(f.x, f.y, 18, { color: DUST, speed: 6, dir: Math.PI * 0.75, spread: 1.2, size: 4, max: 0.7, grav: -4, kind: "puff" });
   }
   const sc = befScale() / cam.k; // il personaggio è disegnato più grande del vero
   const v = Math.hypot(f.vx, f.vy);
   // scie
   if (f.boosting) {
-    const tx = f.x - Math.cos(f.th) * 2.4 * sc;
-    const ty = f.y - Math.sin(f.th) * 2.4 * sc;
+    // marmitta: dietro e un po' sotto la sella
+    const tx = f.x - (Math.cos(f.th) * 1.3 - Math.sin(f.th) * 0.35) * sc;
+    const ty = f.y - (Math.sin(f.th) * 1.3 + Math.cos(f.th) * 0.35) * sc;
     const back = f.th + Math.PI;
     emit(tx, ty, 3, { color: Math.random() < 0.5 ? "#ffd27a" : "#ff7a3a", speed: 14, dir: back, spread: 0.7, vx: f.vx * 0.6, vy: f.vy * 0.6, size: 3, max: 0.35, kind: "spark" });
     emit(tx, ty, 1, { color: "#ff4f6b", speed: 6, dir: back, spread: 1.6, vx: f.vx * 0.5, vy: f.vy * 0.5, size: 2.4, max: 0.6, grav: G, kind: "star" });
@@ -608,7 +610,7 @@ function updateFly(dt: number) {
   } else if (f.phase === "air" && v > 25 && Math.random() < 0.5) {
     emit(f.x - Math.cos(f.th) * 2 * sc, f.y - Math.sin(f.th) * 2 * sc, 1, { color: "#fff6dc", speed: 0.5, size: 2, max: 0.5, kind: "dot" });
   }
-  if (f.phase === "ground" && Math.abs(f.vx) > 2) emit(f.x, f.y, 2, { color: "#fff", speed: Math.min(10, v * 0.3), dir: Math.PI * 0.7, spread: 0.8, size: 4, max: 0.5, grav: 8, kind: "puff" });
+  if (f.phase === "ground" && Math.abs(f.vx) > 2) emit(f.x, f.y, 2, { color: DUST, speed: Math.min(10, v * 0.3), dir: Math.PI * 0.7, spread: 0.8, size: 4, max: 0.5, grav: 8, kind: "puff" });
 
   // impatti
   if (f.impactKind === "crash") {
@@ -617,15 +619,15 @@ function updateFly(dt: number) {
     flash = 0.25;
     flashColor = "#fff";
     dizzy = 2.5;
-    emit(f.x, f.y, 40, { color: "#fff", speed: 12, dir: Math.PI / 2, spread: 2.4, size: 6, max: 1, grav: 12, kind: "puff" });
+    emit(f.x, f.y, 40, { color: DUST, speed: 12, dir: Math.PI / 2, spread: 2.4, size: 6, max: 1, grav: 12, kind: "puff" });
     pop(f.x, f.y + 3, "MUSATA!", "#ff8a7a", 24);
   } else if (f.impactKind === "bounce") {
     sfx.bounce(f.lastImpact);
     shake = Math.max(shake, Math.min(0.5, f.lastImpact / 40));
-    emit(f.x, f.y, 18, { color: "#fff", speed: 8, dir: Math.PI / 2, spread: 2, size: 5, max: 0.8, grav: 12, kind: "puff" });
+    emit(f.x, f.y, 18, { color: DUST, speed: 8, dir: Math.PI / 2, spread: 2, size: 5, max: 0.8, grav: 12, kind: "puff" });
   } else if (f.impactKind === "slide") {
     sfx.bounce(4);
-    emit(f.x, f.y, 10, { color: "#fff", speed: 5, dir: Math.PI / 2, spread: 2, size: 4, max: 0.6, grav: 10, kind: "puff" });
+    emit(f.x, f.y, 10, { color: DUST, speed: 5, dir: Math.PI / 2, spread: 2, size: 4, max: 0.6, grav: 10, kind: "puff" });
   }
   setFlight(f.phase === "ramp" ? f.vs : v, f.boosting, f.phase === "ground" ? v : f.phase === "ramp" ? f.vs * 0.6 : 0);
 
@@ -650,19 +652,19 @@ function updateFly(dt: number) {
         stats.coins++;
         sfx.coin(stats.coins);
         emit(it.x, it.y, 6, { color: "#f2c14e", speed: 4, size: 2.5, max: 0.4, kind: "spark" });
-        pop(it.x, it.y + 1, "+500", "#f2c14e", 14);
+        pop(it.x, it.y + 1, "+2 €", "#f2c14e", 14);
       } else if (it.kind === "panettone") {
         stats.panettoni++;
         sfx.panettone();
         const maxF = BOOST_FUEL[save.lv.botti];
         if (maxF > 0) {
           f.fuel = Math.min(maxF, f.fuel + maxF * 0.5);
-          pop(it.x, it.y + 2, "PANETTONE! botti +50%", "#ffe9a0", 18);
+          pop(it.x, it.y + 2, "SFOGLIATELLA! botti +50%", "#ffe9a0", 18);
         } else {
           const s = 1 + 8 / Math.max(8, v);
           f.vx *= s;
           f.vy *= s;
-          pop(it.x, it.y + 2, "PANETTONE! sprint", "#ffe9a0", 18);
+          pop(it.x, it.y + 2, "SFOGLIATELLA! sprint", "#ffe9a0", 18);
         }
         emit(it.x, it.y, 20, { color: "#ffe9a0", speed: 8, size: 3, max: 0.7, kind: "star" });
         flash = 0.12;
@@ -676,7 +678,7 @@ function updateFly(dt: number) {
         shake = 0.45;
         hitstop = 0.12;
         emit(it.x, it.y, 14, { color: "#2a2233", speed: 7, size: 4, max: 1.4, grav: 2, kind: "feather" });
-        pop(it.x, it.y + 2, "CRA!", "#fbf3e4", 22);
+        pop(it.x, it.y + 2, "QUAA!", "#fbf3e4", 22);
       }
     }
   }
@@ -703,17 +705,17 @@ function updateFly(dt: number) {
       shake = Math.max(shake, 0.2);
       emit(c.x, c.y, 30, { color: "#ffe27a", speed: 10, dir: Math.PI / 2, spread: 1.4, size: 3, max: 1, grav: 6, kind: "star" });
       emit(c.x, c.y + 1, 12, { color: "#555a70", speed: 4, dir: Math.PI / 2, spread: 0.8, size: 7, max: 1, kind: "puff" });
-      pop(c.x, c.y + 3, `CENTRO! +${lire(PAY.chimney * (1 + BONUS[save.lv.cappello]))}`, "#ffe27a", 22);
+      pop(c.x, c.y + 3, `NEL PANARO! +${lire(PAY.chimney * (1 + BONUS[save.lv.cappello]))}`, "#ffe27a", 22);
     } else if (hit.kind === "roof") {
       stats.roof++;
       if (!hit.h!.served) hit.h!.served = 1;
       sfx.roof();
-      emit(s.x, s.y, 10, { color: "#fff", speed: 5, dir: Math.PI / 2, spread: 2, size: 4, max: 0.6, grav: 8, kind: "puff" });
-      pop(s.x, s.y + 2, `sul tetto +${lire(PAY.roof * (1 + BONUS[save.lv.cappello]))}`, "#fbf3e4", 15);
+      emit(s.x, s.y, 10, { color: DUST, speed: 5, dir: Math.PI / 2, spread: 2, size: 4, max: 0.6, grav: 8, kind: "puff" });
+      pop(s.x, s.y + 2, `sul terrazzo +${lire(PAY.roof * (1 + BONUS[save.lv.cappello]))}`, "#fbf3e4", 15);
     } else {
       sfx.miss();
-      emit(s.x, s.y, 8, { color: "#fff", speed: 4, dir: Math.PI / 2, spread: 2, size: 4, max: 0.5, grav: 8, kind: "puff" });
-      pop(s.x, s.y + 2, "nella neve", "#c9c1dc", 13);
+      emit(s.x, s.y, 8, { color: DUST, speed: 4, dir: Math.PI / 2, spread: 2, size: 4, max: 0.5, grav: 8, kind: "puff" });
+      pop(s.x, s.y + 2, "per strada", "#c9c1dc", 13);
     }
   }
 
@@ -725,9 +727,9 @@ function updateFly(dt: number) {
         if (!save.won) {
           winNow = true;
           sfx.win();
-          showBanner("PIAZZA NAVONA!", "Ce l'hai fatta, Befana!", "#f2c14e");
+          showBanner("PIAZZA DEL PLEBISCITO!", "Pizza consegnata, Gennarì!", "#f2c14e");
           for (let i = 0; i < 6; i++) setTimeout(() => fireworks(), i * 350);
-        } else showBanner("PIAZZA NAVONA", "di nuovo!", "#f2c14e");
+        } else showBanner("PLEBISCITO", "di nuovo!", "#f2c14e");
       } else {
         const first = !save.passed.includes(m.x);
         sfx.milestone();
@@ -770,9 +772,9 @@ function endRun(quit: boolean) {
     { k: "Velocità massima", v: `${kmh} km/h`, pt: kmh * PAY.perKmh, rec: kmh > save.bestKmh },
     { k: "Tempo in volo", v: `${air.toFixed(1).replace(".", ",")} s`, pt: air * PAY.perSecond },
   ];
-  if (stats.coins) rows.push({ k: "Monete da 500", v: `× ${stats.coins}`, pt: stats.coins * PAY.coin });
+  if (stats.coins) rows.push({ k: "Monete da 2 €", v: `× ${stats.coins}`, pt: stats.coins * PAY.coin });
   if (stats.chimney || stats.roof)
-    rows.push({ k: "Calze consegnate", v: `${stats.chimney} nel camino, ${stats.roof} sul tetto`, pt: stats.chimney * PAY.chimney + stats.roof * PAY.roof });
+    rows.push({ k: "Pizze consegnate", v: `${stats.chimney} nel panaro, ${stats.roof} sul terrazzo`, pt: stats.chimney * PAY.chimney + stats.roof * PAY.roof });
   let sub = rows.reduce((a, r) => a + r.pt, 0);
   if (bonus) {
     rows.push({ k: "Bonus cappello", v: `+${Math.round(bonus * 100)}%`, pt: sub * bonus });
@@ -805,7 +807,7 @@ function endRun(quit: boolean) {
   ui.res.innerHTML =
     `<h2>${quit ? "Volo interrotto" : record ? "Nuovo record!" : pick(OVER_LINES)}</h2><div class="small" style="color:#6a5a80;margin-bottom:6px">${dateOf(day)}${quit ? " · metà paga" : ""}</div>` +
     rows.map((r) => `<div class="row${r.rec ? " rec" : ""}"><span>${r.k}<br><small>${r.v}${r.rec ? " · record!" : ""}</small></span><b>${lire(r.pt)}</b></div>`).join("") +
-    `<div class="row tot"><span>Totale</span><b id="tot">L. 0</b></div>`;
+    `<div class="row tot"><span>Totale</span><b id="tot">€ 0</b></div>`;
   const els = Array.from(ui.res.querySelectorAll(".row"));
   els.forEach((el, i) =>
     setTimeout(() => {
@@ -843,24 +845,24 @@ function endRun(quit: boolean) {
   }
 }
 let lastBoard: Board | null = null;
-const OVER_LINES = ["Atterrata!", "Che planata!", "Tutta neve!", "Si torna a casa", "Ahia, la schiena", "Ancora un po'!"];
+const OVER_LINES = ["Atterrato!", "Che planata!", "Mamma mia!", "Si torna in pizzeria", "Ahia, la Vespa", "Ancora un po'!", "Jamme ja!"];
 const pick = <T,>(a: T[]) => a[Math.floor(Math.random() * a.length)];
 
 function showWin(day: number) {
-  const left = EPIFANIA - day;
+  const left = DEADLINE - day;
   $("win-text").textContent =
     left > 0
-      ? `Arrivata il ${dateOf(day)}, ${left} giorni prima dell'Epifania. Le calze dei bambini sono salve!`
+      ? `Consegnata il ${dateOf(day)}, ${left} giorni prima del concerto di Capodanno. La pizza è ancora calda!`
       : left === 0
-        ? `Arrivata proprio il 6 gennaio. Giusto in tempo!`
-        : `Arrivata il ${dateOf(day)}, in ritardo di ${-left} giorni. Meglio tardi che mai.`;
+        ? `Consegnata proprio il 31 dicembre. Giusto in tempo per il brindisi!`
+        : `Consegnata il ${dateOf(day)}, in ritardo di ${-left} giorni. Fredda, ma l'hanno mangiata lo stesso.`;
   const min = Math.max(1, Math.round(save.playTime / 60));
   f.x = GOAL + 4;
   f.y = ground(f.x);
   f.vx = f.vy = 0;
   f.th = 0;
   f.boosting = false;
-  $("win-stats").textContent = `${day} voli · circa ${min} minuti · ${save.chimneys} calze nei camini`;
+  $("win-stats").textContent = `${day} voli · circa ${min} minuti · ${save.chimneys} pizze nei panari`;
   show("win");
 }
 function afterWin() {
@@ -966,7 +968,7 @@ function draw() {
     drawPlayer(view);
   } else {
     drawParts(view);
-    drawTitleBefana();
+    drawTitleRider();
   }
   drawSnow(view);
   if (state === "fly" || state === "ready") drawHud(view);
@@ -985,20 +987,20 @@ function drawPlayer(v: View) {
   let th = f.th;
   if (f.phase === "ramp" || f.phase === "ground" || f.phase === "stop") {
     // seduta sulla scopa, sollevata del giusto
-    y += (0.62 * s) / v.k;
+    y += (RIDER_LIFT * s) / v.k;
   }
   if (state === "ready") {
     const p = rampAt(ramp, 0);
     x = p.x;
-    y = p.y + (0.62 * s) / v.k;
+    y = p.y + (RIDER_LIFT * s) / v.k;
     th = p.ang * 0.6;
   }
   g.save();
   g.translate(sx(v, x), sy(v, y));
   g.rotate(-th);
-  g.scale(s / BEFANA_UNIT, s / BEFANA_UNIT);
+  g.scale(s / RIDER_UNIT, s / RIDER_UNIT);
   const speed = f.phase === "ramp" ? f.vs : Math.hypot(f.vx, f.vy);
-  drawBefana(g, {
+  drawRider(g, {
     t: clock,
     wind: Math.min(1, speed / 40),
     boost: f.boosting,
@@ -1016,7 +1018,7 @@ function drawPlayer(v: View) {
   if (f.phase === "air" && f.stall && Math.floor(clock * 4) % 2 === 0) label(g, "STALLO!", sx(v, x), sy(v, y) - s * 2, 16, "#ff8a7a");
 }
 
-function drawTitleBefana() {
+function drawTitleRider() {
   const s = Math.min(W, H) / 8.5;
   const x = W * 0.5 + Math.sin(clock * 0.7) * W * 0.06;
   const y = H * 0.6 + Math.sin(clock * 1.4) * s * 0.15;
@@ -1028,36 +1030,33 @@ function drawTitleBefana() {
   g.save();
   g.translate(x, y);
   g.rotate(-0.12 + Math.sin(clock * 1.4) * 0.05);
-  g.scale(s / BEFANA_UNIT, s / BEFANA_UNIT);
-  drawBefana(g, { t: clock, wind: 0.7, boost: false, socks: 4, blink: Math.sin(clock * 1.3) > 0.985 });
+  g.scale(s / RIDER_UNIT, s / RIDER_UNIT);
+  drawRider(g, { t: clock, wind: 0.7, boost: false, socks: 4, blink: Math.sin(clock * 1.3) > 0.985 });
   g.restore();
 }
 
 function drawSocks(v: View) {
+  // cartoni della pizza che girano in aria
   for (const s of socks) {
-    const r = Math.max(8, v.k * 0.6);
+    const r = Math.max(9, v.k * 0.6);
     g.save();
     g.translate(sx(v, s.x), sy(v, s.y));
     g.rotate(s.rot);
-    g.fillStyle = s.color;
+    g.scale(1, 0.5 + 0.5 * Math.abs(Math.cos(s.rot * 0.7)));
+    g.fillStyle = "#f3e2bf";
     g.strokeStyle = "#1c1426";
     g.lineWidth = 2;
     g.beginPath();
-    g.moveTo(-r * 0.4, -r);
-    g.lineTo(r * 0.4, -r);
-    g.lineTo(r * 0.4, r * 0.3);
-    g.quadraticCurveTo(r * 0.9, r * 0.5, r * 0.8, r);
-    g.lineTo(-r * 0.4, r);
-    g.closePath();
+    g.rect(-r, -r * 0.35, r * 2, r * 0.7);
     g.fill();
     g.stroke();
-    g.fillStyle = "#fbf3e4";
-    g.fillRect(-r * 0.45, -r, r * 0.9, r * 0.35);
+    g.fillStyle = "#c8443a";
+    g.fillRect(-r * 0.5, -r * 0.12, r, r * 0.24);
     g.restore();
   }
 }
 
-// traiettoria prevista della prossima calza
+// traiettoria prevista della prossima pizza
 function drawAim(v: View) {
   let x = f.x;
   let y = f.y - 0.5;
@@ -1134,8 +1133,9 @@ function drawSnow(v: View) {
   const dx = (cam.x - lastCam.x) * cam.k;
   const dy = (cam.y - lastCam.y) * cam.k;
   const fast = Math.hypot(dx, dy);
-  g.strokeStyle = "rgba(255,255,255,0.75)";
-  g.fillStyle = "rgba(255,255,255,0.8)";
+  // pulviscolo e petali nel vento
+  g.strokeStyle = "rgba(255,255,255,0.45)";
+  g.fillStyle = "rgba(255,255,255,0.5)";
   for (const fl of flakes) {
     fl.x -= (dx * fl.z) / W;
     fl.y += (dy * fl.z) / H + 0.0009 * fl.z;
@@ -1144,7 +1144,7 @@ function drawSnow(v: View) {
     fl.y = ((fl.y % 1) + 1) % 1;
     const X = fl.x * W;
     const Y = fl.y * H;
-    const r = fl.z * 2.2;
+    const r = fl.z * 1.4;
     if (fast > 6) {
       g.lineWidth = r;
       g.beginPath();
@@ -1187,7 +1187,7 @@ function drawHud(v: View) {
   const alt = Math.max(0, f.y - ground(f.x));
   label(g, `quota ${Math.round(alt)} m · ${Math.round(v2 * 3.6 * TIME_SCALE)} km/h`, pad, pad + big + 22, small ? 14 : 16, "#c9d6ff", "left");
 
-  // percorso fino a Piazza Navona
+  // percorso fino a Piazza del Plebiscito
   const top = Math.max(GOAL, save.best);
   const bw = small ? W - pad * 2 : Math.min(460, W - 520);
   const bx = small ? pad : (W - bw) / 2;
@@ -1218,7 +1218,7 @@ function drawHud(v: View) {
   g.arc(px, by + 4, 6, 0, Math.PI * 2);
   g.fill();
   g.stroke();
-  if (!small) label(g, "Piazza Navona", bx + bw, by + 30, 12, "#f2c14e", "right");
+  if (!small) label(g, "Plebiscito", bx + bw, by + 30, 12, "#f2c14e", "right");
 
   // botti e calze (sotto i pulsanti in alto a destra)
   const rx = W - pad;
@@ -1265,7 +1265,7 @@ function drawHud(v: View) {
     label(g, isTouch ? "Tocca per partire!" : "Spazio per partire!", W / 2, H * 0.3, 30 * pulse, "#fbf3e4");
     label(
       g,
-      isTouch ? "▲▼ inclinati · BOTTI spinta · CALZA nei camini" : "▲▼ inclinati · Spazio botti · X calza nel camino",
+      isTouch ? "▲▼ inclinati · BOTTI spinta · PIZZA nei panari" : "▲▼ inclinati · Spazio botti · X lancia la pizza",
       W / 2,
       H * 0.3 + 32,
       small ? 13 : 17,
@@ -1277,8 +1277,11 @@ function drawHud(v: View) {
     const t = banner.life;
     const s = t > 2.1 ? 1 + (t - 2.1) * 2 : 1;
     g.globalAlpha = Math.min(1, t * 2);
-    label(g, banner.text, W / 2, H * 0.19, (small ? 28 : 40) * s, banner.color);
-    if (banner.sub) label(g, banner.sub, W / 2, H * 0.19 + (small ? 26 : 34), small ? 15 : 19, "#fbf3e4");
+    // il banner non copre la Vespa: se è in alto va più giù
+    const py = sy(v, f.y);
+    const BY = py < H * 0.42 ? Math.max(H * 0.5, py + H * 0.22) : H * 0.19;
+    label(g, banner.text, W / 2, BY, (small ? 28 : 40) * s, banner.color);
+    if (banner.sub) label(g, banner.sub, W / 2, BY + (small ? 26 : 34), small ? 15 : 19, "#fbf3e4");
     g.globalAlpha = 1;
   }
   void v;

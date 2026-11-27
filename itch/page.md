@@ -1,19 +1,19 @@
-# Vola, Befana! su itch.io
+# Pizza Volante su itch.io
 
-Pagina: https://davide97g.itch.io/vola-befana · build con `../tools/itch-push.sh vola-befana`.
+Pagina: https://davide97g.itch.io/pizza-volante · build con `../tools/itch-push.sh pizza-volante`.
 Ricetta della pagina: `../tools/itch-page-recipe.md` (Genre `Simulation`, embed 960x720, Mobile friendly).
 
 ## Tema
-- BG `#141a3a` · BG 2 `#fbf3e4` · Text `#1c1426` · Link `#c8443a`
+- BG `#5aa9e6` · BG 2 `#fbf3e4` · Text `#1c1426` · Link `#c8443a`
 
 ## Testi
 
-**Title**: Vola, Befana!
+**Title**: Pizza Volante
 
 **Short description**
-> La scopa è rotta e l'Epifania si avvicina: lanciati dalla rampa, plana, accendi i botti e arriva a Piazza Navona.
+> Una Vespa, un'ala di cartone e una pizza da portare al concerto di Capodanno in Piazza del Plebiscito.
 
-**Tags**: arcade, upgrades, flying, physics, casual, christmas, singleplayer, short, italian, high-score
+**Tags**: arcade, upgrades, flying, physics, casual, pizza, singleplayer, short, italian, high-score
 
 **Genre**: Simulation
 
@@ -22,23 +22,22 @@ Ricetta della pagina: `../tools/itch-page-recipe.md` (Genre `Simulation`, embed 
 ```
 Giorno N di "Videogiochi della mia infanzia": per tutto dicembre rifaccio un gioco a cui giocavo da piccolo, uno al giorno, fino a capodanno. Tutti i giochi: https://videogiochi.davideghiotto.it
 
-VOLA, BEFANA!
-La scopa della Befana si è spelacchiata e il 6 gennaio è dietro l'angolo. Ogni giorno di dicembre è un tentativo: scendi dalla rampa, plana sulle colline innevate, inclinati per prendere velocità e tirati su prima di toccare terra. Ogni volo ti paga in lire: distanza, quota, velocità, tempo in aria e monete da 500.
+PIZZA VOLANTE
+Gennarino fa il fattorino in una pizzeria sulle pendici del Vesuvio. Il 31 dicembre deve portare una pizza sul palco del concerto di Capodanno in Piazza del Plebiscito, e la strada più corta è per aria: Vespa, ala di cartone e via. Ogni giorno di dicembre è un tentativo: giù dalla rampa, plana sopra limoneti e colline, picchia per prendere velocità e tirati su prima di toccare terra. Ogni volo paga in mance: distanza, quota, velocità, tempo in aria e monete da 2 euro.
 
-Nel laboratorio compri rampe più alte (dal tetto di casa al trampolino di Cortina), scope migliori, botti di Capodanno per la spinta, calze da lanciare nei camini e cappelli che attirano le monete. La strada passa dal campanile, dal lago ghiacciato, dagli acquedotti e dal Colosseo: arriverai a Piazza Navona prima dell'Epifania?
+Nel garage compri rampe più alte (dal vicolo in discesa al bordo del cratere), ali migliori (tovaglia a quadri, ombrellone, deltaplano), botti di Capodanno per la spinta, pizze da lanciare e cornetti portafortuna che attirano le monete. La strada passa da San Gregorio Armeno, dal lungomare (si scivola), da Posillipo, dall'acquedotto, dal Maschio Angioino e da Castel dell'Ovo: arriverai prima del concerto?
 
-CALZE NEI CAMINI
-Segui i puntini: quando il cerchio diventa verde, lancia la calza. Nel camino paga tanto, sul tetto poco. I fumi dei camini ti spingono in alto, i panettoni ricaricano i botti, i corvi ti frenano.
+PIZZE NEI PANARI
+Sui tetti ci sono i panari, i cesti di vimini. Segui i puntini: quando il cerchio diventa verde, lancia la pizza. Dentro il cesto la mancia è grossa, sul terrazzo piccola. Il fumo dei forni a legna ti spinge in alto, le sfogliatelle ricaricano i botti, i gabbiani ti frenano.
 
 CLASSIFICA
 Prima di giocare scegli un nick (o lascialo vuoto). La classifica pubblica è anonima, il nick lo vedo solo io.
 
 COMANDI
-Frecce su/giù (o W/S) per inclinarti, Spazio per i botti, X per lanciare una calza, M audio, P pausa. Da telefono: tasti ▲▼, BOTTI e CALZA sullo schermo.
+Frecce su/giù (o W/S) per inclinarti, Spazio per i botti, X per lanciare una pizza, M audio, P pausa. Da telefono: tasti ▲▼, BOTTI e PIZZA sullo schermo.
 
-Ispirato a Learn to Fly. Befana, musica (una tarantella), effetti e grafica generati nel codice.
+Ispirato a Learn to Fly. Personaggio, musica (una tarantella), effetti e grafica generati nel codice.
 
 ---
 
-Day N of "Videogames of my childhood". The Befana's broom is broken and Epiphany is coming: launch, glide, light fireworks and reach Piazza Navona in Rome.
-```
+Day N of "Videogames of my childhood". A pizza delivery guy on a flying Vespa must reach the New Year's Eve concert in Naples: launch, glide, light fireworks and drop pizzas into rooftop baskets.

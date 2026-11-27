@@ -10,7 +10,7 @@ let noiseBuf: AudioBuffer;
 let muted = false;
 const VOL = 0.55;
 try {
-  muted = localStorage.getItem("vola-befana-muted") === "1";
+  muted = localStorage.getItem("pizza-volante-muted") === "1";
 } catch {
   /* niente */
 }
@@ -62,7 +62,7 @@ export function initAudio() {
 export function toggleMute() {
   muted = !muted;
   try {
-    localStorage.setItem("vola-befana-muted", muted ? "1" : "0");
+    localStorage.setItem("pizza-volante-muted", muted ? "1" : "0");
   } catch {
     /* niente */
   }
